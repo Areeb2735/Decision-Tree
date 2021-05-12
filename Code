@@ -1,0 +1,41 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+from matplotlib import pyplot as plt
+import seaborn as sns
+
+iris=pd.read_csv('Iris.csv')
+iris.head()
+iris.info()
+
+iris.describe()
+
+iris.drop(['Id'],axis=1,inplace=True)
+sns.pairplot(iris,hue='Species')
+X_train,X_test,y_train,y_test=train_test_split(iris.drop(['Species'],axis=1),iris['Species'],test_size=0.2)
+X_train.shape,X_test.shape,y_train.shape,y_test.shape
+print('Shape of X_train is',X_train.shape)
+print('Shape of X_test is',X_test.shape)
+print('Shape of y_train is',y_train.shape)
+print('Shape of y_test is',y_test.shape)
+
+model=DecisionTreeClassifier()
+
+model.fit(X_train,y_train)
+
+plt.figure(figsize=(20,15))
+tree.plot_tree(model,filled=True)
+prediction=model.predict(X_test)
+
+t=pd.DataFrame(prediction)
+t.columns=['Predicted']
+p=pd.DataFrame(y_test)
+p.columns=['Actual']
+p=p.reset_index(drop=True)
+pd.concat([t,p],axis=1)
+
+score=accuracy_score(prediction,y_test)
+print('Accuracy of the Model is ', round(score*100,2),'%')
